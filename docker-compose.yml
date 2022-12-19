@@ -1,0 +1,37 @@
+version: "3.9"
+
+# creating the services that are part of our
+# application stack
+services:
+  my-api-service:
+    # tells docker compose to use the Dockerfile
+    # in the_app/ folder
+    build: the_app/
+
+    # mount the application src folder inside the container
+    volumes:
+      - ./the_app:/usr/src/app
+
+    # map host port 9000 to container port 4000
+    ports:
+      - 9000:4000
+
+  # creating a new service called DB
+  db:
+      # basing it on mysql v.8.0.x
+      image: mysql:8
+      # mapping container port 3306 to host port 3306
+      # (note: 3306 is the default mysql port)
+      ports:
+        - 3200:3306
+
+      volumes:
+      - ./db_bootstrap:/docker-entrypoint-initdb.d:ro
+
+      # Provide an environtment variable containing
+      # whatever we want the root password to be
+      # NOTE: This is for demo purposese only.
+      # abc123 is a TERRIBLE password and you wouldn't ever
+      # want to store the root password in a shared public file
+      environment:
+        - MYSQL_ROOT_PASSWORD=abc123
